@@ -1,0 +1,396 @@
+/**
+ * HANLA (All-Ages) - Stylesheet
+ * 
+ * Defines the "Clean & Colorful" theme and handles responsive 
+ * scaling for mobile, tablet, and TV displays.
+ */
+
+:root {
+    /* --- Color Palette --- */
+    --bg-color: #f0f4f8;
+    --text-color: #2d3748;
+    --correct-color: #6aaa64;    /* Green */
+    --present-color: #c9b458;    /* Yellow */
+    --absent-color: #787c7e;     /* Gray */
+    --tile-border: #d3d6da;
+    --tile-bg: #ffffff;
+    --key-bg: #d3d6da;
+    --key-text: #2d3748;
+    --primary-btn: #4299e1;      /* Bright Blue */
+    --primary-btn-hover: #3182ce;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Nunito', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    height: 100vh;
+    height: 100dvh; /* Dynamic viewport height for mobile browser support */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    user-select: none;
+    touch-action: manipulation; /* Optimizes for touch devices */
+}
+
+#game-container {
+    width: 100%;
+    max-width: 500px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* --- Screen Transitions --- */
+.screen {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+}
+
+.screen.active {
+    display: flex;
+}
+
+/* --- Start Screen --- */
+#start-screen {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.logo {
+    font-size: 4rem;
+    font-weight: 900;
+    color: var(--primary-btn);
+    margin-bottom: 0.5rem;
+    letter-spacing: 2px;
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    color: var(--text-color);
+    opacity: 0.8;
+}
+
+.difficulty-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    max-width: 300px;
+}
+
+.diff-btn {
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 12px;
+    background-color: var(--primary-btn);
+    color: white;
+    cursor: pointer;
+    transition: transform 0.1s, background-color 0.2s;
+}
+
+.diff-btn:hover {
+    background-color: var(--primary-btn-hover);
+    transform: scale(1.02);
+}
+
+.diff-btn:active {
+    transform: scale(0.98);
+}
+
+/* --- Game Screen Layout --- */
+#game-screen {
+    justify-content: space-between;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--tile-border);
+    padding-bottom: 10px;
+}
+
+.game-title {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--primary-btn);
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-color);
+    padding: 5px 10px;
+}
+
+.spacer { width: 44px; }
+
+/* --- Game Board & Tiles --- */
+#board-container {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 0;
+}
+
+#board {
+    display: grid;
+    gap: 5px;
+}
+
+.tile {
+    width: 55px;
+    height: 55px;
+    border: 2px solid var(--tile-border);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    background-color: var(--tile-bg);
+    border-radius: 8px;
+    transition: transform 0.1s;
+}
+
+/* Tile Feedback States */
+.tile[data-state="toggled"] {
+    border-color: var(--text-color);
+    animation: pop 0.1s;
+}
+
+.tile.correct {
+    background-color: var(--correct-color);
+    border-color: var(--correct-color);
+    color: white;
+}
+
+.tile.present {
+    background-color: var(--present-color);
+    border-color: var(--present-color);
+    color: white;
+}
+
+.tile.absent {
+    background-color: var(--absent-color);
+    border-color: var(--absent-color);
+    color: white;
+}
+
+/* --- Virtual Keyboard --- */
+#keyboard {
+    margin-bottom: 10px;
+}
+
+.keyboard-row {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 8px;
+    width: 100%;
+}
+
+.key {
+    background-color: var(--key-bg);
+    color: var(--key-text);
+    border: none;
+    border-radius: 4px;
+    padding: 15px 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 45px;
+    text-transform: uppercase;
+}
+
+.key.large {
+    max-width: 65px;
+    font-size: 0.9rem;
+}
+
+/* Keyboard State Colors */
+.key.correct { background-color: var(--correct-color); color: white; }
+.key.present { background-color: var(--present-color); color: white; }
+.key.absent { background-color: var(--absent-color); color: white; }
+
+/* --- Mobile Input Hint --- */
+#mobile-input-container {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+#active-input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.mobile-hint {
+    font-size: 0.9rem;
+    color: var(--text-color);
+    opacity: 0.6;
+    background: var(--tile-border);
+    padding: 5px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+/* --- Base Mobile Responsive Overrides --- */
+@media (max-width: 600px) {
+    #keyboard {
+        display: none; /* Hide virtual keys to prioritize tile size */
+    }
+
+    #mobile-input-container {
+        display: flex;
+    }
+
+    .tile {
+        /* Scale tiles based on screen width */
+        width: clamp(50px, 15vw, 70px);
+        height: clamp(50px, 15vw, 70px);
+        font-size: clamp(1.8rem, 8vw, 2.5rem);
+    }
+
+    #board { gap: 8px; }
+    #board-container { padding: 10px 0; }
+}
+
+/* --- Modals --- */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    inset: 0;
+    background-color: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal.active { display: flex; }
+
+.modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 90%;
+    width: 350px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+#modal-title { margin-bottom: 10px; font-size: 2rem; }
+#modal-message { margin-bottom: 20px; font-size: 1.1rem; opacity: 0.8; }
+
+#play-again-btn {
+    padding: 12px 24px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    background-color: var(--correct-color);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+/* --- Toasts --- */
+.toast {
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--text-color);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: 700;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+
+.toast.show { opacity: 1; }
+
+/* --- Animations --- */
+@keyframes pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
+}
+
+.shake { animation: shake 0.2s ease-in-out 2; }
+
+.flip {
+    transition: transform 0.4s;
+    transform-style: preserve-3d;
+}
+
+.tile.flip {
+    transform: rotateX(90deg);
+}
+
+/* --- TV & Large Screen Optimization --- */
+@media (min-width: 1000px) and (min-height: 700px) {
+    #game-container { max-width: 800px; }
+    #keyboard { display: block; }
+    #mobile-input-container { display: none; }
+
+    .logo { font-size: 6rem; }
+    .subtitle { font-size: 1.8rem; }
+    .diff-btn { padding: 25px 50px; font-size: 2rem; border-radius: 20px; }
+    .game-title { font-size: 3rem; }
+
+    .tile {
+        width: 80px;
+        height: 80px;
+        font-size: 3rem;
+        border-radius: 12px;
+    }
+
+    .key {
+        max-width: 70px;
+        height: 70px;
+        font-size: 1.8rem;
+        border-radius: 8px;
+    }
+
+    .key.large { max-width: 110px; font-size: 1.4rem; }
+
+    .modal-content { width: 500px; padding: 50px; }
+    #modal-title { font-size: 3.5rem; }
+    #modal-message { font-size: 2rem; }
+    #play-again-btn { padding: 20px 40px; font-size: 1.8rem; }
+}

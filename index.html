@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hanla - All Ages</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <div id="game-container">
+        <!-- Start Screen -->
+        <div id="start-screen" class="screen active">
+            <h1 class="logo">HANLA</h1>
+            <p class="subtitle">Pick your word length:</p>
+            <div class="difficulty-options">
+                <button class="diff-btn" data-length="3">3 Letters</button>
+                <button class="diff-btn" data-length="4">4 Letters</button>
+                <button class="diff-btn" data-length="5">5 Letters</button>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-screen" class="screen">
+            <header>
+                <button id="back-btn" class="icon-btn">←</button>
+                <h2 class="game-title">HANLA</h2>
+                <div class="spacer"></div>
+            </header>
+
+            <div id="board-container">
+                <div id="board"></div>
+            </div>
+
+            <!-- Mobile Input Area -->
+            <div id="mobile-input-container">
+                <input type="text" id="active-input" autocomplete="off" autofocus>
+                <p class="mobile-hint">Tap to type</p>
+            </div>
+
+            <div id="keyboard">
+                <div class="keyboard-row" id="row-1"></div>
+                <div class="keyboard-row" id="row-2"></div>
+                <div class="keyboard-row" id="row-3"></div>
+            </div>
+        </div>
+
+        <!-- Modal for Win/Loss -->
+        <div id="message-modal" class="modal">
+            <div class="modal-content">
+                <h2 id="modal-title"></h2>
+                <p id="modal-message"></p>
+                <button id="play-again-btn">Play Again</button>
+            </div>
+        </div>
+
+        <!-- Toast for short messages -->
+        <div id="toast" class="toast"></div>
+    </div>
+
+    <script src="assets/js/words.js"></script>
+    <script src="assets/js/game.js"></script>
+</body>
+</html>
