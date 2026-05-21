@@ -13,6 +13,7 @@ This project was created to provide a safe space for kids to practice spelling a
   - **TV/Desktop:** Includes a colourful on-screen keyboard for remote and group play.
 - **Responsive Design:** Optimised for everything from small phones to 4K TVs.
 - **Zero Install:** Just open `index.html` in any modern web browser.
+- **Test It Out:** `https://flashsolver.github.io/hanlah/`
 
 ## 🎮 How to Play
 1. Pick a word length to start.
