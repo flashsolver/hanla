@@ -41,9 +41,11 @@ class Hanla {
             });
         });
 
-        // Focus management: Tap anywhere on game screen to trigger mobile keyboard
+        // Focus management: Only focus if not a touch device to avoid triggering virtual keyboard
         document.getElementById('game-screen').addEventListener('click', () => {
-            if (!this.gameOver) this.activeInput.focus();
+            if (!this.gameOver && !('ontouchstart' in window)) {
+                this.activeInput.focus();
+            }
         });
 
         // Native Mobile Input Sync

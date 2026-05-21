@@ -267,26 +267,41 @@ header {
 /* --- Base Mobile Responsive Overrides --- */
 @media (max-width: 600px) {
     body {
-        align-items: flex-start;
+        align-items: center; /* Re-center since we aren't fighting the keyboard anymore */
     }
 
     #keyboard {
-        display: none; /* Hide virtual keys to prioritize tile size */
+        display: block;
+        width: 100%;
+        padding: 0 5px;
+    }
+
+    .key {
+        max-width: none; /* Allow flex to shrink keys */
+        height: 45px;
+        padding: 0;
+        font-size: 1rem;
+        border-radius: 4px;
+    }
+
+    .key.large {
+        flex: 1.5;
+        font-size: 0.8rem;
     }
 
     #mobile-input-container {
-        display: flex;
+        display: none;
     }
 
     .tile {
-        /* Scale tiles based on screen width */
-        width: clamp(50px, 15vw, 70px);
-        height: clamp(50px, 15vw, 70px);
-        font-size: clamp(1.8rem, 8vw, 2.5rem);
+        /* Slightly smaller tiles to make room for keyboard */
+        width: clamp(45px, 12vw, 60px);
+        height: clamp(45px, 12vw, 60px);
+        font-size: clamp(1.5rem, 6vw, 2rem);
     }
 
-    #board { gap: 8px; }
-    #board-container { padding: 10px 0; }
+    #board { gap: 5px; }
+    #board-container { padding: 5px 0; }
 }
 
 /* --- Modals --- */
