@@ -245,7 +245,11 @@ header {
 }
 
 #active-input {
-    position: absolute;
+    position: fixed;
+    top: -100px;
+    left: 0;
+    width: 0;
+    height: 0;
     opacity: 0;
     pointer-events: none;
 }
@@ -262,6 +266,10 @@ header {
 
 /* --- Base Mobile Responsive Overrides --- */
 @media (max-width: 600px) {
+    body {
+        align-items: flex-start;
+    }
+
     #keyboard {
         display: none; /* Hide virtual keys to prioritize tile size */
     }
