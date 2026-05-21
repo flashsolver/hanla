@@ -264,6 +264,19 @@ header {
     cursor: pointer;
 }
 
+/* --- Footer --- */
+footer {
+    padding: 10px;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--text-color);
+    opacity: 0.5;
+}
+
+.version {
+    font-weight: 700;
+}
+
 /* --- Base Mobile Responsive Overrides --- */
 @media (max-width: 600px) {
     body {
