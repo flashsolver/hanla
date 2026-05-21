@@ -13,7 +13,14 @@
     <div id="game-container">
         <!-- Start Screen -->
         <div id="start-screen" class="screen active">
-            <h1 class="logo">HANLA</h1>
+            <div class="theme-selector-container">
+                <label for="theme-select">Theme:</label>
+                <select id="theme-select">
+                    <option value="realistic">Realistic Cafe</option>
+                    <option value="gamified">Gamified Sunset</option>
+                </select>
+            </div>
+            <h1 class="logo">HANLAH</h1>
             <p class="subtitle">Pick your word length:</p>
             <div class="difficulty-options">
                 <button class="diff-btn" data-length="3">3 Letters</button>
@@ -26,8 +33,13 @@
         <div id="game-screen" class="screen">
             <header>
                 <button id="back-btn" class="icon-btn">←</button>
-                <h2 class="game-title">HANLA</h2>
-                <div class="spacer"></div>
+                <h2 class="game-title">HANLAH</h2>
+                <div class="theme-selector-container-small">
+                    <select id="theme-select-game" class="theme-select">
+                        <option value="realistic">Realistic</option>
+                        <option value="gamified">Gamified</option>
+                    </select>
+                </div>
             </header>
 
             <div id="board-container">
@@ -60,7 +72,7 @@
         <div id="toast" class="toast"></div>
 
         <footer>
-            <p class="version">v1.1.2 - Custom Keyboard Update</p>
+            <p class="version">v1.3.5 - Gamified Default Update</p>
         </footer>
     </div>
 

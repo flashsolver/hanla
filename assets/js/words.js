@@ -1,5 +1,5 @@
 /**
- * HANLA (All-Ages) - Family-Friendly Dictionary
+ * HANLAH (All-Ages) - Family-Friendly Dictionary
  * 
  * Curated lists of 3, 4, and 5-letter words suitable for all ages.
  * To add your own words, simply add them to the relevant array in ALL CAPS.

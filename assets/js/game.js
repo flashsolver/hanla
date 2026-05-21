@@ -1,19 +1,23 @@
 /**
- * HANLA (All-Ages) - Game Engine
+ * HANLAH (All-Ages) - Game Engine
  * 
  * This file handles the core game lifecycle, input management, 
  * and validation logic. It is written in vanilla JavaScript 
  * for maximum compatibility and ease of modification.
  */
 
-class Hanla {
+class Hanlah {
     constructor() {
         // --- State Management ---
-        this.wordLength = 5;      // Default length
-        this.secretWord = "";      // The word to guess
-        this.guesses = [];         // History of guesses
-        this.currentGuess = "";    // Current typing buffer
-        this.gameOver = false;     // Game status flag
+        this.wordLength = 5;       // Number of letters in the secret word
+        this.secretWord = "";       // The current word to guess
+        this.guesses = [];          // List of submitted guesses
+        this.currentGuess = "";     // Current word being typed
+        this.gameOver = false;      // Prevents input when game is finished
+        this.themes = ['gamified', 'realistic'];
+        
+        // Initialize theme from storage or default to 'gamified'
+        this.currentTheme = localStorage.getItem('hanlah-theme') || 'gamified';
         
         // --- DOM Elements ---
         this.screens = {
@@ -26,25 +30,20 @@ class Hanla {
         this.toast = document.getElementById('toast');
         this.activeInput = document.getElementById('active-input');
         
+        // Theme Selectors
+        this.themeSelectStart = document.getElementById('theme-select');
+        this.themeSelectGame = document.getElementById('theme-select-game');
+        
+        // Apply initial theme and setup listeners
+        this.applyTheme(this.currentTheme);
         this.init();
     }
 
     /**
-     * Helper to focus the hidden input only on non-touch devices (Desktop).
-     */
-    focusInput() {
-        if (this.gameOver) return;
-        const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-        if (!isTouchDevice) {
-            this.activeInput.focus();
-        }
-    }
-
-    /**
-     * Set up event listeners and global keyboard support.
+     * Set up all global event listeners and initial UI state.
      */
     init() {
-        // Difficulty Selection Buttons
+        // Difficulty Selection: 3, 4, or 5 letters
         document.querySelectorAll('.diff-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 this.wordLength = parseInt(btn.dataset.length);
@@ -52,48 +51,82 @@ class Hanla {
             });
         });
 
-        // Focus management: Use helper to prevent native keyboard on mobile
-        document.getElementById('game-screen').addEventListener('click', () => {
-            this.focusInput();
-        });
+        // Theme Selection Sync (Start Screen)
+        if (this.themeSelectStart) {
+            this.themeSelectStart.value = this.currentTheme;
+            this.themeSelectStart.addEventListener('change', (e) => this.setTheme(e.target.value));
+        }
 
-        // Native Mobile Input Sync
+        // Theme Selection Sync (Game Screen)
+        if (this.themeSelectGame) {
+            this.themeSelectGame.value = this.currentTheme;
+            this.themeSelectGame.addEventListener('change', (e) => this.setTheme(e.target.value));
+        }
+
+        // Native Input Event: Fires on typing (Mobile/Desktop)
         this.activeInput.addEventListener('input', (e) => {
             if (this.gameOver) return;
             const val = e.target.value.toUpperCase();
-            // Sanitize: Only A-Z allowed
             const filtered = val.replace(/[^A-Z]/g, '').slice(0, this.wordLength);
             this.currentGuess = filtered;
             this.activeInput.value = filtered;
             this.updateTiles();
         });
 
-        // Enter key for Native Keyboard (kept for Desktop users who focus the input)
+        // Enter key for Native Input
         this.activeInput.addEventListener('keydown', (e) => {
             if (this.gameOver) return;
-            if (e.key === 'Enter') {
-                this.submitGuess();
-            }
+            if (e.key === 'Enter') this.submitGuess();
         });
 
-        // Navigation and Modals
-        document.getElementById('back-btn').addEventListener('click', () => {
-            this.showScreen('start');
-        });
+        // Click anywhere to focus hidden input (Desktop only)
+        document.getElementById('game-screen').addEventListener('click', () => this.focusInput());
 
+        // Modal and Navigation Buttons
+        document.getElementById('back-btn').addEventListener('click', () => this.showScreen('start'));
         document.getElementById('play-again-btn').addEventListener('click', () => {
             this.hideModal();
             this.startGame();
         });
 
-        // Physical Keyboard Support (for Desktop users)
+        // Hardware Keyboard Support
         window.addEventListener('keydown', (e) => this.handlePhysicalInput(e));
         
+        // Populate the virtual keyboard UI
         this.createVirtualKeyboard();
     }
 
     /**
-     * Resets state and initializes a new game session.
+     * Logic for focusing hidden input while avoiding triggering mobile native keyboards.
+     */
+    focusInput() {
+        if (this.gameOver) return;
+        const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+        if (!isTouch) this.activeInput.focus();
+    }
+
+    /**
+     * Theme management: Saves preference and updates the UI.
+     */
+    setTheme(theme) {
+        this.currentTheme = theme;
+        this.applyTheme(theme);
+        localStorage.setItem('hanlah-theme', theme);
+        
+        // Sync both dropdowns
+        if (this.themeSelectStart) this.themeSelectStart.value = theme;
+        if (this.themeSelectGame) this.themeSelectGame.value = theme;
+    }
+
+    /**
+     * Updates the DOM attribute to trigger CSS theme shifts.
+     */
+    applyTheme(theme) {
+        document.body.dataset.theme = theme;
+    }
+
+    /**
+     * Initializes a fresh game session.
      */
     startGame() {
         this.gameOver = false;
@@ -106,12 +139,11 @@ class Hanla {
         this.resetKeyboardColors();
         this.showScreen('game');
         
-        // Slight delay to ensure the screen transition is smooth
         setTimeout(() => this.focusInput(), 500);
     }
 
     /**
-     * Picks a random word based on the current wordLength.
+     * Fetches a random word based on the chosen length.
      */
     getRandomWord() {
         const list = WORDS[this.wordLength];
@@ -119,7 +151,7 @@ class Hanla {
     }
 
     /**
-     * Switches between start and game screens.
+     * Transitions between game screens (start vs game).
      */
     showScreen(screenName) {
         Object.values(this.screens).forEach(s => s.classList.remove('active'));
@@ -127,13 +159,12 @@ class Hanla {
     }
 
     /**
-     * Dynamically generates the grid based on word length.
+     * Generates the empty tile grid for the board.
      */
     renderBoard() {
         this.board.innerHTML = "";
         this.board.style.gridTemplateColumns = `repeat(${this.wordLength}, 1fr)`;
         
-        // Always create 6 rows
         for (let i = 0; i < 6 * this.wordLength; i++) {
             const tile = document.createElement('div');
             tile.classList.add('tile');
@@ -142,7 +173,7 @@ class Hanla {
     }
 
     /**
-     * Creates the on-screen virtual keyboard for TV/Desktop.
+     * Builds the interactive virtual keyboard.
      */
     createVirtualKeyboard() {
         const rows = [
@@ -164,7 +195,7 @@ class Hanla {
                 btn.dataset.key = key;
                 
                 btn.addEventListener('click', (e) => {
-                    e.stopPropagation(); // Prevent re-focusing activeInput
+                    e.stopPropagation();
                     this.handleInput(key);
                 });
                 rowEl.appendChild(btn);
@@ -173,7 +204,7 @@ class Hanla {
     }
 
     /**
-     * Clears all color coding from the keyboard.
+     * Resets visual feedback on the keyboard for a new game.
      */
     resetKeyboardColors() {
         document.querySelectorAll('.key').forEach(key => {
@@ -182,10 +213,9 @@ class Hanla {
     }
 
     /**
-     * Bridge for hardware keyboard input.
+     * Maps physical key presses to game actions.
      */
     handlePhysicalInput(e) {
-        // Ignore if the native input already has focus to avoid double-processing
         if (this.gameOver || document.activeElement === this.activeInput) return;
         const key = e.key.toUpperCase();
         
@@ -195,7 +225,7 @@ class Hanla {
     }
 
     /**
-     * Processes input from ANY source (virtual, physical, or native).
+     * Centralized input handler for physical, virtual, and native keyboards.
      */
     handleInput(key) {
         if (this.gameOver || !this.screens.game.classList.contains('active')) return;
@@ -216,7 +246,7 @@ class Hanla {
     }
 
     /**
-     * Updates the current row of tiles on the board.
+     * Updates the board tiles to match the current guess buffer.
      */
     updateTiles() {
         const rowStart = this.guesses.length * this.wordLength;
@@ -226,7 +256,7 @@ class Hanla {
             const tile = tiles[rowStart + i];
             tile.textContent = this.currentGuess[i] || "";
             if (this.currentGuess[i]) {
-                tile.dataset.state = "toggled"; // Triggers CSS "pop" animation
+                tile.dataset.state = "toggled";
             } else {
                 delete tile.dataset.state;
             }
@@ -234,7 +264,7 @@ class Hanla {
     }
 
     /**
-     * Finalizes the current guess.
+     * Triggers the guess processing if length is valid.
      */
     submitGuess() {
         if (this.currentGuess.length < this.wordLength) {
@@ -246,7 +276,7 @@ class Hanla {
     }
 
     /**
-     * Validates word, animates tiles, and checks for win/loss.
+     * Validates guess, animates tiles, and checks win/loss.
      */
     async processGuess() {
         const guess = this.currentGuess;
@@ -254,10 +284,9 @@ class Hanla {
         const rowStart = this.guesses.length * this.wordLength;
         const tiles = Array.from(this.board.querySelectorAll('.tile')).slice(rowStart, rowStart + this.wordLength);
 
-        this.gameOver = true;   // Disable input during animation
-        this.activeInput.blur(); // Hide keyboard during animation
+        this.gameOver = true;   
+        this.activeInput.blur(); 
 
-        // Sequential animation for each tile
         for (let i = 0; i < tiles.length; i++) {
             const tile = tiles[i];
             tile.classList.add('flip');
@@ -277,33 +306,30 @@ class Hanla {
         } else if (this.guesses.length === 6) {
             this.endGame(false);
         } else {
-            this.focusInput(); // Ready for next guess
+            this.focusInput();
         }
     }
 
     /**
-     * Core Hanla Logic: Computes the color state for each letter.
-     * Handles duplicate letters correctly.
+     * Core Algorithm: Calculates Green/Yellow/Gray states for a guess.
      */
     calculateResult(guess, secret) {
         const result = new Array(this.wordLength).fill('absent');
         const secretArr = secret.split('');
         const guessArr = guess.split('');
 
-        // First pass: Find exact matches (Green)
         for (let i = 0; i < this.wordLength; i++) {
             if (guessArr[i] === secretArr[i]) {
                 result[i] = 'correct';
-                secretArr[i] = null; // Mark used
+                secretArr[i] = null;
                 guessArr[i] = null;
             }
         }
 
-        // Second pass: Find misplaced matches (Yellow)
         for (let i = 0; i < this.wordLength; i++) {
             if (guessArr[i] && secretArr.includes(guessArr[i])) {
                 result[i] = 'present';
-                secretArr[secretArr.indexOf(guessArr[i])] = null; // Mark used
+                secretArr[secretArr.indexOf(guessArr[i])] = null;
             }
         }
 
@@ -311,7 +337,7 @@ class Hanla {
     }
 
     /**
-     * Updates virtual keyboard colors based on the highest-priority feedback.
+     * Highlights keys on the virtual keyboard.
      */
     updateKeyboardKey(letter, state) {
         const key = document.querySelector(`.key[data-key="${letter}"]`);
@@ -329,7 +355,7 @@ class Hanla {
     }
 
     /**
-     * Visual feedback for invalid/too-short words.
+     * Shake animation for invalid input.
      */
     shakeRow() {
         const rowStart = this.guesses.length * this.wordLength;
@@ -341,7 +367,7 @@ class Hanla {
     }
 
     /**
-     * Helper for temporary text overlays.
+     * Displays a brief pop-up message.
      */
     showToast(msg) {
         this.toast.textContent = msg;
@@ -350,7 +376,7 @@ class Hanla {
     }
 
     /**
-     * Handles Game Over screen.
+     * Shows the final outcome and results.
      */
     endGame(win) {
         this.gameOver = true;
@@ -370,4 +396,4 @@ class Hanla {
 }
 
 // Global initialization
-new Hanla();
+new Hanlah();
