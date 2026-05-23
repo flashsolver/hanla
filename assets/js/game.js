@@ -15,9 +15,13 @@ class Hanlah {
         this.currentGuess = "";     // Current word being typed
         this.gameOver = false;      // Prevents input when game is finished
         this.themes = ['gamified', 'realistic'];
+        this.gameSessionId = 0;    // Unique session ID to interrupt async operations
         
         // Initialize theme from storage or default to 'gamified'
         this.currentTheme = localStorage.getItem('hanlah-theme') || 'gamified';
+        
+        // Initialize dictionary validation from storage
+        this.dictValidation = localStorage.getItem('hanlah-dict-validation') === 'true';
         
         // --- DOM Elements ---
         this.screens = {
@@ -30,9 +34,13 @@ class Hanlah {
         this.toast = document.getElementById('toast');
         this.activeInput = document.getElementById('active-input');
         
-        // Theme Selectors
+        // Theme & Settings Selectors
         this.themeSelectStart = document.getElementById('theme-select');
         this.themeSelectGame = document.getElementById('theme-select-game');
+        this.dictToggle = document.getElementById('dict-toggle');
+        
+        // Bound Event Handlers
+        this.boundHandlePhysicalInput = this.handlePhysicalInput.bind(this);
         
         // Apply initial theme and setup listeners
         this.applyTheme(this.currentTheme);
@@ -63,6 +71,15 @@ class Hanlah {
             this.themeSelectGame.addEventListener('change', (e) => this.setTheme(e.target.value));
         }
 
+        // Dictionary Validation Toggle
+        if (this.dictToggle) {
+            this.dictToggle.checked = this.dictValidation;
+            this.dictToggle.addEventListener('change', (e) => {
+                this.dictValidation = e.target.checked;
+                localStorage.setItem('hanlah-dict-validation', this.dictValidation);
+            });
+        }
+
         // Native Input Event: Fires on typing (Mobile/Desktop)
         this.activeInput.addEventListener('input', (e) => {
             if (this.gameOver) return;
@@ -78,19 +95,29 @@ class Hanlah {
             if (this.gameOver) return;
             if (e.key === 'Enter') this.submitGuess();
         });
-
         // Click anywhere to focus hidden input (Desktop only)
         document.getElementById('game-screen').addEventListener('click', () => this.focusInput());
 
+        // Stop propagation of header clicks to prevent focusInput from closing select menus
+        const header = document.querySelector('#game-screen header');
+        if (header) {
+            ['click', 'mousedown', 'touchstart'].forEach(type => {
+                header.addEventListener(type, (e) => e.stopPropagation());
+            });
+        }
+
         // Modal and Navigation Buttons
-        document.getElementById('back-btn').addEventListener('click', () => this.showScreen('start'));
+        document.getElementById('back-btn').addEventListener('click', () => {
+            this.gameSessionId = 0; // Invalidate active session to interrupt animations & endGame()
+            this.showScreen('start');
+        });
         document.getElementById('play-again-btn').addEventListener('click', () => {
             this.hideModal();
             this.startGame();
         });
 
         // Hardware Keyboard Support
-        window.addEventListener('keydown', (e) => this.handlePhysicalInput(e));
+        window.addEventListener('keydown', this.boundHandlePhysicalInput);
         
         // Populate the virtual keyboard UI
         this.createVirtualKeyboard();
@@ -134,6 +161,7 @@ class Hanlah {
         this.currentGuess = "";
         this.activeInput.value = "";
         this.secretWord = this.getRandomWord();
+        this.gameSessionId = Date.now(); // Generate unique session ID
         
         this.renderBoard();
         this.resetKeyboardColors();
@@ -272,6 +300,17 @@ class Hanlah {
             this.shakeRow();
             return;
         }
+
+        // Check dictionary list if validation is enabled
+        if (this.dictValidation) {
+            const wordList = WORDS[this.wordLength];
+            if (!wordList || !wordList.includes(this.currentGuess.toUpperCase())) {
+                this.showToast("Not on the menu!");
+                this.shakeRow();
+                return;
+            }
+        }
+
         this.processGuess();
     }
 
@@ -283,6 +322,7 @@ class Hanlah {
         const result = this.calculateResult(guess, this.secretWord);
         const rowStart = this.guesses.length * this.wordLength;
         const tiles = Array.from(this.board.querySelectorAll('.tile')).slice(rowStart, rowStart + this.wordLength);
+        const currentSession = this.gameSessionId;
 
         this.gameOver = true;   
         this.activeInput.blur(); 
@@ -291,10 +331,17 @@ class Hanlah {
             const tile = tiles[i];
             tile.classList.add('flip');
             await new Promise(r => setTimeout(r, 200));
+            
+            // Interrupt if session is no longer active (back click or reset)
+            if (this.gameSessionId !== currentSession) return;
+            
             tile.classList.remove('flip');
             tile.classList.add(result[i]);
             this.updateKeyboardKey(guess[i], result[i]);
         }
+
+        // Final safety check before mutating game state and triggering endgame sequence
+        if (this.gameSessionId !== currentSession) return;
 
         this.guesses.push(guess);
         this.currentGuess = "";
@@ -392,6 +439,15 @@ class Hanlah {
 
     hideModal() {
         this.modal.classList.remove('active');
+    }
+
+    /**
+     * Cleans up global event listeners to prevent memory leaks.
+     */
+    destroy() {
+        if (this.boundHandlePhysicalInput) {
+            window.removeEventListener('keydown', this.boundHandlePhysicalInput);
+        }
     }
 }
 

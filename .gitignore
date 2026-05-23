@@ -13,3 +13,7 @@ desktop.ini
 # Temporary files
 *.tmp
 *.log
+
+# Personal files
+ideas.txt
+
