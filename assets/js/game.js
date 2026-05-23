@@ -14,7 +14,7 @@ class Hanlah {
         this.guesses = [];          // List of submitted guesses
         this.currentGuess = "";     // Current word being typed
         this.gameOver = false;      // Prevents input when game is finished
-        this.themes = ['gamified', 'realistic'];
+        this.themes = ['gamified', 'realistic', 'space', 'forest', 'cyberpunk'];
         this.gameSessionId = 0;    // Unique session ID to interrupt async operations
         
         // Initialize theme from storage or default to 'gamified'

@@ -50,6 +50,60 @@ body[data-theme="gamified"] {
     /* Inherits from :root */
 }
 
+/* SPACE THEME OVERRIDES */
+body[data-theme="space"] {
+    --bg-color: #0a0b10;
+    --text-color: #e0e0ff;
+    --correct-color: #00e676;
+    --correct-text: #0a0b10;
+    --present-color: #ffd600;
+    --present-text: #0a0b10;
+    --absent-color: #37474f;
+    --absent-text: #e0e0ff;
+    --tile-border: #5f5fc4;
+    --tile-bg: #1a1b26;
+    --key-bg: #24283b;
+    --key-text: #e0e0ff;
+    --primary-btn: #6200ea;
+    --primary-btn-hover: #4a00b0;
+}
+
+/* FOREST THEME OVERRIDES */
+body[data-theme="forest"] {
+    --bg-color: #e8f5e9;
+    --text-color: #273c1c;
+    --correct-color: #388e3c;
+    --correct-text: #ffffff;
+    --present-color: #ffb300;
+    --present-text: #273c1c;
+    --absent-color: #8d6e63;
+    --absent-text: #ffffff;
+    --tile-border: #273c1c;
+    --tile-bg: #f1f8e9;
+    --key-bg: #c8e6c9;
+    --key-text: #273c1c;
+    --primary-btn: #2e7d32;
+    --primary-btn-hover: #1b5e20;
+}
+
+/* CYBERPUNK THEME OVERRIDES */
+body[data-theme="cyberpunk"] {
+    --bg-color: #0c0f1d;
+    --text-color: #00f0ff;
+    --correct-color: #00f0ff;
+    --correct-text: #0c0f1d;
+    --present-color: #ff007f;
+    --present-text: #0c0f1d;
+    --absent-color: #3b3e52;
+    --absent-text: #00f0ff;
+    --tile-border: #00f0ff;
+    --tile-bg: #151a30;
+    --key-bg: #1e2540;
+    --key-text: #00f0ff;
+    --primary-btn: #ff007f;
+    --primary-btn-hover: #d8006b;
+}
+
 /* ==========================================================================
    2. BASE LAYOUT & TYPOGRAPHY
    ========================================================================== */
@@ -100,10 +154,31 @@ body[data-theme="realistic"] {
 
 /* Gamified Theme Backgrounds */
 body[data-theme="gamified"] {
-    background-image: linear-gradient(rgba(255, 204, 128, 0.7), rgba(255, 204, 128, 0.7)), url('../images/cafe-sunset-bg.jpg');
+    background-image: linear-gradient(rgba(255, 204, 128, 0.7), rgba(255, 204, 128, 0.7)), url('../images/cafe-sunset-bg-desktop.jpg');
 }
 @media (orientation: landscape) { body[data-theme="gamified"] { background-image: linear-gradient(rgba(255, 204, 128, 0.7), rgba(255, 204, 128, 0.7)), url('../images/cafe-sunset-bg-desktop.jpg'); } }
 @media (orientation: portrait) { body[data-theme="gamified"] { background-image: linear-gradient(rgba(255, 204, 128, 0.7), rgba(255, 204, 128, 0.7)), url('../images/cafe-sunset-bg-mobile.jpg'); } }
+
+/* Space Theme Backgrounds */
+body[data-theme="space"] {
+    background-image: linear-gradient(rgba(10, 11, 16, 0.75), rgba(10, 11, 16, 0.75)), url('../images/space-bg-desktop.png');
+}
+@media (orientation: landscape) { body[data-theme="space"] { background-image: linear-gradient(rgba(10, 11, 16, 0.75), rgba(10, 11, 16, 0.75)), url('../images/space-bg-desktop.png'); } }
+@media (orientation: portrait) { body[data-theme="space"] { background-image: linear-gradient(rgba(10, 11, 16, 0.75), rgba(10, 11, 16, 0.75)), url('../images/space-bg-mobile.png'); } }
+
+/* Forest Theme Backgrounds */
+body[data-theme="forest"] {
+    background-image: linear-gradient(rgba(232, 245, 233, 0.75), rgba(232, 245, 233, 0.75)), url('../images/forest-bg-desktop.png');
+}
+@media (orientation: landscape) { body[data-theme="forest"] { background-image: linear-gradient(rgba(232, 245, 233, 0.75), rgba(232, 245, 233, 0.75)), url('../images/forest-bg-desktop.png'); } }
+@media (orientation: portrait) { body[data-theme="forest"] { background-image: linear-gradient(rgba(232, 245, 233, 0.75), rgba(232, 245, 233, 0.75)), url('../images/forest-bg-mobile.png'); } }
+
+/* Cyberpunk Theme Backgrounds */
+body[data-theme="cyberpunk"] {
+    background-image: linear-gradient(rgba(12, 15, 29, 0.75), rgba(12, 15, 29, 0.75)), url('../images/cyberpunk-bg-desktop.png');
+}
+@media (orientation: landscape) { body[data-theme="cyberpunk"] { background-image: linear-gradient(rgba(12, 15, 29, 0.75), rgba(12, 15, 29, 0.75)), url('../images/cyberpunk-bg-desktop.png'); } }
+@media (orientation: portrait) { body[data-theme="cyberpunk"] { background-image: linear-gradient(rgba(12, 15, 29, 0.75), rgba(12, 15, 29, 0.75)), url('../images/cyberpunk-bg-mobile.png'); } }
 
 /* ==========================================================================
    4. SCREENS & NAVIGATION
